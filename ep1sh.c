@@ -1,12 +1,12 @@
 int main(){
 while(1){
-/* Tratar Mensagens do usuário enviadas pelo teclado */
+/* Imprimir o diretório */
 
-/* Enviar comandos para SO */
+/* Tratar Mensagens do usuário enviadas pelo teclado (scanf) */
 
-/* Receber resposta do SO */
+/* Enviar comandos para SO (fork) */
 
-/* Enviar mensagens para o terminal */
+/* Enviar mensagens para o terminal ? */
 
 }
 return 0;
