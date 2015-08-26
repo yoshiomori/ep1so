@@ -11,7 +11,7 @@ int main(){
     while(1){
         /* Imprimir o diretório */
 	pcwd = getcwd(NULL, 0);
-	printf("[ %s ]\n", pcwd);
+	printf("[ %s ]  ", pcwd);
 
         /* Tratar entrada do usuário (scanf) */
         int numMaxCaracALer = NUM_MAX_INICIAL_CARAC_A_LER;
