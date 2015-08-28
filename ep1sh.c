@@ -41,21 +41,21 @@ int main(){
 	}
       }
       /* Interpretador */
-      if(!strcmp("ls", entrada)){
+      if(!strcmp("ls", entrada)){ // Interpretação do ls
 	args[0] = "-1";
 	execve("/bin/ls", args, 0);
 	perror("execve");
 	exit(EXIT_FAILURE);
       }
-      else if(!strcmp("pwd", entrada))
+      else if(!strcmp("pwd", entrada)) // Interpretação do PWD
 	printf("%s\n", pcwd);
-      else if(!strcmp("./ep1", entrada)){
+      else if(!strcmp("./ep1", entrada)){ // TODO: Interpretação do ./ep1
 	printf("Executa ep1 ");
 	for(ii = 0; ii < i; ii++)
 	  printf("%s ", args[ii]);
 	printf("\n");
       }
-      else if(!strcmp("cd", entrada)){
+      else if(!strcmp("cd", entrada)){ // TODO: Interpretação do cd
 	printf("Executa cd ");
 	for(ii = 0; ii < i; ii++)
 	  printf("%s ", args[ii]);
