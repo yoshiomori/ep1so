@@ -1,4 +1,5 @@
 #include "mallocSafe.h"
+#include "leituraArq.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,7 +7,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-#define NUM_MAX_INICIAL_CARAC_A_LER 100
+#define NUM_MAX_CARAC_A_LER 10000
 #define PATH_MAX 4096
 #define ARG_MAX 131072
 
@@ -14,17 +15,19 @@ int main(){
   char *pcwd;
   char *args[ARG_MAX];
   pid_t childPid;
-  int numMaxCaracALer = NUM_MAX_INICIAL_CARAC_A_LER;
-  char *entrada = mallocSafe(numMaxCaracALer * sizeof(char));
+  char *entrada = mallocSafe(NUM_MAX_CARAC_A_LER * sizeof(char));
   char *c; /* Iterador de string */
   int i, ii; /* Iterador */
+
   while(1){
     /* Imprimir o diretório */
     pcwd = getcwd(NULL, 0);
-    printf("[ %s ]  ", pcwd);
+    printf("[%s]  ", pcwd);
     
     /* Tratar entrada do usuário (scanf) */
-    fgets(entrada, numMaxCaracALer, stdin);        
+    leLinha(entrada, NUM_MAX_CARAC_A_LER, stdin); /* le ateh NUM_MAX_CARAC_A_LER - 1 caracteres,
+                                                     jogando fora os demais caracteres */
+    
     
     /* Enviar comandos para SO (fork) */
     switch (childPid = fork()){

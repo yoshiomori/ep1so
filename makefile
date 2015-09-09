@@ -8,11 +8,11 @@ LDFLAGS = -g
 
 LDLIBS = 
 
-ep1sh: ep1sh.o mallocSafe.o
+ep1sh: ep1sh.o mallocSafe.o leituraArq.o
 #	$(CC) $(LDFLAGS) ep1sh.o mallocSafe.o $(LDLIBS)
 #	(regra implicita do makefile)
 
-ep1sh.o: ep1sh.c mallocSafe.h 
+ep1sh.o: ep1sh.c mallocSafe.h leituraArq.h
 #	$(CC) -c $(CFLAGS) ep1sh.c
 
 
