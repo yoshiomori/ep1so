@@ -13,11 +13,10 @@
 
 int main(){
   char *pcwd;
-  char *args[ARG_MAX];
   char *argv[ARG_MAX + 2];
   pid_t childPid;
   char *entrada = mallocSafe(NUM_MAX_CARAC_A_LER * sizeof(char));
-  char *c; /* Iterador de string */
+  char *str;
   int i, ii; /* Iterador */
 
   while(1){
@@ -30,12 +29,11 @@ int main(){
                                                      jogando fora os demais caracteres */
     
     /* 3. Parsear entrada */
-    for(c = entrada, i = 0; *c; c++){
-      if(*c == ' ' || *c == '\n'){
-        *c = '\0';
-        if(*(c + 1) && *(c + 1) != ' ' && i < ARG_MAX)
-          args[i++] = c + 1;
-      }
+    i = 0;
+    str = strtok(entrada, " \n");
+    while(str && i < ARG_MAX){
+      argv[i++] = str;
+      str = strtok(NULL, " \n");
     }
 
     /* neste ponto, entrada contem o comando/binario que o usuario deseja executar
@@ -46,39 +44,22 @@ int main(){
      */
 
     /* 4. Criar argv */
-    argv[0] = entrada;
-    for(ii = 1; ii <= i; ii++) {
-      argv[ii] = args[ii - 1];
-    }
-    argv[i + 1] = NULL;
+    
 
     /* 5. Executar comando/binario */
-
-    /* TESTE COMECA  */
-    printf("args:");
-    for(ii = 0; ii < i; ii++) {
-        printf("%s ", args[ii]);
-    }
-    printf("argv:");
-    for(ii = 0; ii <= i; ii++) {
-        printf("%s ", argv[ii]);
-    }
-    printf("\n");
-    /* TESTE TERMINA */
-
     /* 5.1 Comando cd */
-    if(!strcmp("cd", entrada)) {
+    if(!strcmp("cd", argv[0])) {
       /* TESTE COMECA 
       printf("Executa cd ");
       for(ii = 0; ii < i; ii++)
         printf("%s ", args[ii]);
       printf("\n");
       TESTE TERMINA */
-      chdir(args[0]);
+      chdir(argv[1]);
     }
 
     /* 5.2 Comando pwd */
-    else if(!strcmp("pwd", entrada)) {
+    else if(!strcmp("pwd", argv[0])) {
       printf("%s\n", pcwd);
     }
 
@@ -91,18 +72,18 @@ int main(){
           break;
         case 0: /* Processo filho */
           /* 5.3.1 Binario /bin/ls -1 */
-          if(!strcmp("/bin/ls", entrada) && !strcmp("-1", args[0])){ 
+          if(!strcmp("/bin/ls", argv[0]) && !strcmp("-1", argv[1])){ 
             printf("vou executar /bin/ls com o seguinte argv:");
             for(ii = 0; ii <= i; ii++) {
               printf("%s,", argv[ii]);
             }
             printf("\n");
-            execve("/bin/ls", argv, 0);
+            execve(argv[0], argv, 0);
             perror("execve");
             exit(EXIT_FAILURE);
           }
           /* 5.3.2 Binario ./ep1 */
-          else if(!strcmp("./ep1", entrada)){ // TODO: Interpretação do ./ep1
+          else if(!strcmp("./ep1", argv[0])){ // TODO: Interpretação do ./ep1
             /* TESTE COMECA 
             printf("Executa ep1 ");
             for(ii = 0; ii < i; ii++)
