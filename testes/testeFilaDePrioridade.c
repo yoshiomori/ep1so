@@ -22,9 +22,8 @@ int main(){
       PQinsert(tmp);
       printf("%d foi inserido\n", tmp);
     }
-    for(i = 0; i < PQsize(); i++)
-      printf("%d\n", PQget());
     while (!PQempty()) printf("%d foi removido\n", PQdelmin());
   }
+  printf("%d\n", PQfirst());
   return 0;
 }

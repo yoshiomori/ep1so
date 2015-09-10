@@ -53,28 +53,6 @@ int PQdelmin(){
   return pq[N--]; 
 }
 
-void push(int v){
-  stack[++SN] = v;
-}
-
-int pull(){
-  return stack[SN--];
-}
-
-
-void PQreset(){
-  SN = 0;
-  push(1);
-}
-
-int PQget(){
-  int i = pull();
-  int f = i*2;
-  push(f);
-  push(f+1);
-  return pq[i];
-}
-
-int PQsize(){
-  return N;
+int PQfirst(){
+  return *pq + 1;
 }

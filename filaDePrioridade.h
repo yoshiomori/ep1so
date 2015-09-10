@@ -5,3 +5,4 @@ int PQdelmin();
 void PQreset();
 int PQget();
 int PQsize();
+int PQfirst();
