@@ -1,20 +1,49 @@
-#include "filaDePrioridade.h"
-void peneira (int p, int m, int v[], int(*cmp)(int,int)){
-  int f = 2*p, x = v[p];
-  while(f < m){
-    if(f < m - 1 && cmp(v[f], v[f + 1]) == 1) ++f;
-    if(cmp(x, v[f]) != -1) break;
-    v[p] = v[f];
-    p = f, f = 2 * p;
+#include <stdlib.h>
+
+static int *pq; 
+static int N;
+
+static int (*less)(int, int);
+
+void fixUp(int a[], int k){
+  int tmp;
+  while (k > 1 && less(a[k], a[k/2])){
+    tmp = a[k];
+    a[k] = a[k/2];
+    a[k/2] = tmp;
+    k = k/2;
   }
-  v[p] = x;
 }
-void heapsort(int n, int v[], int(*cmp)(int, int)){
-  int p, m, x;
-  for (p = n/2; p >= 0; --p)
-    peneira(p, n, v, cmp);
-  for(m = n - 1; m >= 1; --m){
-    x = v[0], v[0] = v[m], v[m] = x;
-    peneira(0, m-1, v, cmp);
+
+void fixDown(int a[], int k, int N){
+  int j, tmp;
+  while (2*k <= N){
+    j = 2*k;
+    if (j < N && less(a[j+1], a[j])) j++;
+    if (!less(a[j], a[k])) break;
+    tmp = a[k];
+    a[k] = a[j];
+    a[j] = tmp;
+    k = j;
   }
+}
+void PQinit(int maxN, int (*tmp)(int, int)){
+  pq = malloc((maxN+1)*sizeof(int));
+  N = 0;
+  less = tmp;
+}
+int PQempty(){
+  return N == 0;
+}
+void PQinsert(int v){
+  pq[++N] = v;
+  fixUp(pq, N);
+}
+int PQdelmax(){ 
+  int tmp;
+  tmp = pq[1];
+  pq[1] = pq[N];
+  pq[N] = tmp; 
+  fixDown(pq, 1, N-1); 
+  return pq[N--]; 
 }
