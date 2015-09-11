@@ -18,9 +18,9 @@ ep1sh: ep1sh.o mallocSafe.o leituraArq.o
 ep1sh.o: ep1sh.c mallocSafe.h leituraArq.h
 #	$(CC) -c $(CFLAGS) ep1sh.c
 
-ep1: ep1.o mallocSafe.o
+ep1: ep1.o mallocSafe.o filaDePrioridade.o
 
-ep1.o: ep1.c mallocSafe.h
+ep1.o: ep1.c mallocSafe.h filaDePrioridade.h
 
 .PHONY: clean
 

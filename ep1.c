@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 #include "mallocSafe.h"
+#include "filaDePrioridade.h"
 
 #define NUM_MAX_PROC (INT_MAX - 10)
 #define TAM_MAX_NOME_PROC 1000
@@ -22,6 +23,12 @@ void ***proc;
 
 /* PROTOTIPOS DAS FUNCOES AUXILIARES */
 
+int menor1(int i, int j);
+int menor2(int i, int j);
+int menor3(int i, int j);
+int menor5(int i, int j);
+int menor6(int i, int j);
+
 void *trabalha(void* arg);
 
 void criaThread(int j);
@@ -30,14 +37,17 @@ void despausaThread(int j);
 
 void pausaThread(int j);
 
+/* MAIN */
 int main(int argc, char **argv){
   FILE *arqTraces;
-  /* 1. Verificamos numero de argumentos */
+  /* 0. Verificamos numero de argumentos */
   if(argc < 4){
     printf("Falta argumentos\n");
     exit(0);
   }
-
+  /* 1. Lemos o primeiro argumento em escalonador */
+  int escalonador = atoi(argv[1]);
+  printf("escalonador = %d\n", escalonador);
   /* 2. Abrimos arquivo de traces */
   arqTraces = fopen(argv[2], "r");
   if(!arqTraces){
@@ -98,8 +108,19 @@ int main(int argc, char **argv){
     CPU_SET(k, &cpuSet[k]);
   }
 
-  /* 6. Criamos uma fila de prioridade threadsPausadas inicialmente vazia */
-  /* TODO */
+  /* 6. Criamos uma fila de prioridade inicialmente vazia
+   * que contera as threads pausadas */
+  if(escalonador == 1) {
+    PQinit(numProc, menor1);
+  } else if(escalonador == 2) {
+    PQinit(numProc, menor2);
+  } else if(escalonador == 3) {
+    PQinit(numProc, menor3);
+  } else if(escalonador == 5) {
+    PQinit(numProc, menor5);
+  } else if(escalonador == 6) {
+    PQinit(numProc, menor6);
+  }
 
   /* 7. */
   
@@ -112,8 +133,48 @@ int main(int argc, char **argv){
 }
 
 
-/* funcoes auxiliares */
+/* DEFINICOES DAS FUNCOES AUXILIARES */
 
+/* Retorna 1 se processo de indice
+ * i tem precedencia em relacao ao de indice j
+ * segundo o escalonamento (1) FCFS
+ * Retorna -1 se j tem precedencia sobre i
+ * Retorna 0 se i e j tem a mesma precedencia
+ */
+int menor1(int i, int j) {
+  /* comparamos os t0 do i e do j */
+  if(proc[i][0] < proc[j][0]) return 1; 
+  else if(proc[i][0] > proc[j][0]) return -1;
+  return 0;
+}
+
+int menor2(int i, int j) {
+  /* comparamos os dt do i e do j */
+  if(proc[i][2] < proc[j][2]) return 1;
+  else if(proc[i][2] > proc[j][2]) return -1;
+  return 0;
+}
+
+int menor3(int i, int j) {
+  /* comparamos os r (= dt - tempo consumido) do i e do j */
+  if(proc[i][6] < proc[j][6]) return 1;
+  else if(proc[i][6] > proc[j][6]) return -1;
+  return 0;
+}
+
+int menor5(int i, int j) {
+  /* comparamos os p do i e do j */
+  if(proc[i][4] < proc[j][4]) return 1;
+  else if(proc[i][4] > proc[j][4]) return -1;
+  return 0;
+}
+
+int menor6(int i, int j) {
+  /* comparamos os deadlines do i e do j */
+  if(proc[i][3] < proc[j][3]) return 1;
+  else if(proc[i][3] > proc[j][3]) return -1;
+  return 0;
+}
 
 int fatorial(int n) {
     if(n == 0) return 1;
@@ -132,6 +193,9 @@ void *trabalha(void* arg) {
     pthread_mutex_unlock((pthread_mutex_t*)proc[meuIndice][7]); /* unlock(mutex1) */
     while(1) {
         fatorial(3); /* fazemos qualquer coisa para gastar tempo de CPU */
+        if(*(double*)proc[meuIndice][6] <= 0) { /* se r = dt - tempo consumido <= 0 */
+          goto fim;
+        }
         if(pthread_mutex_trylock((pthread_mutex_t*)proc[meuIndice][8]) == 0) { /* se trylock(mutex2) */
             /* isto eh, demos trylock no mutex2 com sucesso */
             pthread_mutex_unlock((pthread_mutex_t*)proc[meuIndice][8]); /* unlock(mutex2) */
@@ -140,7 +204,10 @@ void *trabalha(void* arg) {
     }
   }   
 
+fim:
   free((int*)arg);
+  *(int*)proc[meuIndice][9] = 1; /* terminou := 1 */
+  return NULL;
 }
 
 
@@ -151,12 +218,12 @@ void criaThread(int j) {
   proc[j][6] = (void*)mallocSafe(sizeof(double));
   proc[j][7] = (void*)mallocSafe(sizeof(pthread_mutex_t));
   proc[j][8] = (void*)mallocSafe(sizeof(pthread_mutex_t));
-  proc[j][9] = (void*)mallocSafe(sizeof(pthread_mutex_t));
+  proc[j][9] = (void*)mallocSafe(sizeof(int));
   
-  *(double*)proc[j][6] = *(double*)proc[j][2]; /* r:= dt */
+  *(double*)proc[j][6] = *(double*)proc[j][2]; /* r := dt */
   pthread_mutex_init((pthread_mutex_t*)proc[j][7], NULL);
   pthread_mutex_init((pthread_mutex_t*)proc[j][8], NULL);
-  pthread_mutex_init((pthread_mutex_t*)proc[j][9], NULL);
+  *(int*)proc[j][9] = 0; /* terminou := 0 */
   
   pthread_mutex_lock(proc[j][7]); /* lock(mutex1); */
   
