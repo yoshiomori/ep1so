@@ -6,3 +6,4 @@ void PQreset();
 int PQget();
 int PQsize();
 int PQfirst();
+void PQprint();

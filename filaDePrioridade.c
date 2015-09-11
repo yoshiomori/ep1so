@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 static int *pq; 
 static int N;
@@ -55,4 +56,13 @@ int PQdelmin(){
 
 int PQfirst(){
   return *pq + 1;
+}
+
+void PQprint() {
+  printf("PQ: [");
+  int j;
+  for(j = 1; j < N; j++) {
+    printf("%d, ", pq[j]);
+  }
+  printf("%d ]", pq[N]);
 }

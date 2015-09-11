@@ -8,8 +8,10 @@ LDFLAGS = -g -pthread
 
 LDLIBS = 
 
+EXEC = ep1sh ep1
+
 .PHONY: all
-all: ep1sh ep1
+all: $(EXEC)
 
 ep1sh: ep1sh.o mallocSafe.o leituraArq.o
 #	$(CC) $(LDFLAGS) ep1sh.o mallocSafe.o $(LDLIBS)
@@ -25,7 +27,7 @@ ep1.o: ep1.c mallocSafe.h filaDePrioridade.h
 .PHONY: clean
 
 clean:
-	rm -f *.o 
+	rm -f *.o $(EXEC)
 
 
 
