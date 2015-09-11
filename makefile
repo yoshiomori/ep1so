@@ -4,7 +4,7 @@ INCLUDES =
 
 CFLAGS = -g -Wall $(INCLUDES)
 
-LDFLAGS = -g
+LDFLAGS = -g -pthread
 
 LDLIBS = 
 
