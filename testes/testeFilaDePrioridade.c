@@ -4,7 +4,6 @@
 
 int less(int a, int b){
   if(a < b) return 1;
-  if(a > b) return -1;
   return 0;
 }
 
@@ -17,13 +16,14 @@ int main(){
   if (PQempty()) printf("Fila vazia\n");
   else{
     printf("Fila não está mais vazia\n");
-    printf("%d\n", PQdelmax());
+    printf("%d\n", PQdelmin());
     for (i = 0; i < 10; i++){
       tmp = rand() % 100;
       PQinsert(tmp);
       printf("%d foi inserido\n", tmp);
     }
-    while (!PQempty()) printf("%d foi removido\n", PQdelmax());
+    while (!PQempty()) printf("%d foi removido\n", PQdelmin());
   }
+  printf("%d\n", PQfirst());
   return 0;
 }
